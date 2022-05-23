@@ -1,0 +1,3 @@
+/home/algan/Game-Jam/build/CMakeFiles/rebuild_cache.dir
+/home/algan/Game-Jam/build/CMakeFiles/edit_cache.dir
+/home/algan/Game-Jam/build/CMakeFiles/game.dir
