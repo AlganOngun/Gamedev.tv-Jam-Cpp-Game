@@ -24,5 +24,7 @@ namespace JamEngine
 		void initializeWindow();
 
 		void update();
+
+		bool isWindowOpen();
     };
 }

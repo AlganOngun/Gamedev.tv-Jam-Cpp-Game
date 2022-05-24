@@ -8,12 +8,16 @@ public:
 	void start()
 	{
 		JamEngine::App::initialize();
-		std::cout << "Hello World";
 	}
 
 	void run()
 	{
 		JamEngine::App::update();
+	}
+
+	bool shouldEnd()
+	{
+		return !JamEngine::App::isOpen;
 	}
 
 	~JamGame()
@@ -27,7 +31,7 @@ int main()
 	auto game = std::make_unique<JamGame>(JamGame());
 	game->start();
 
-	while(1)
+	while(!game->shouldEnd())
 	{
 		game->run();
 	}

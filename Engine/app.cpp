@@ -8,6 +8,7 @@
 namespace JamEngine
 {
 	Window App::window("Jam Game", 600, 600);
+	bool App::isOpen = false;
 
     void App::initialize()
     {
@@ -22,11 +23,14 @@ namespace JamEngine
 		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 		window.initializeWindow();
+
+		isOpen = true;
     }
 
     void App::update()
     {
 		window.update();
+		isOpen = window.isWindowOpen();
     }
 
     void App::end()

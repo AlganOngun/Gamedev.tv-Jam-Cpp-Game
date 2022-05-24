@@ -51,4 +51,9 @@ namespace JamEngine
 		}
 		glfwWindow.reset(rawWindow);
 	}
+
+	bool Window::isWindowOpen()
+	{
+		return isOpen;
+	}
 }
