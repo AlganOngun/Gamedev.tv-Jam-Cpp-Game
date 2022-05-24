@@ -10,14 +10,14 @@ namespace JamEngine
 	private:
 		smartGlfwWindow glfwWindow;
 
-		int width{}, height{};
+		Vector2 size;
 		std::string title{};
 		bool isOpen = false;
 
 		void closeWindow();
 
 	public:
-		Window(const std::string& title, int width, int height);
+		Window(const std::string& title, const Vector2& size);
 		~Window();
 
 		void createWindow();

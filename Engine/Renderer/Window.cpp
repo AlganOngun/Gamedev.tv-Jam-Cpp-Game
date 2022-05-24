@@ -3,11 +3,10 @@
 
 namespace JamEngine
 {
-	Window::Window(const std::string& title, int width, int height)
+	Window::Window(const std::string& title, const Vector2& size)
 	{
 		this->title = title;
-		this->width = width;
-		this->height = height;
+		this->size = size;
 	}
 
 	Window::~Window()
@@ -22,7 +21,7 @@ namespace JamEngine
 
 	void Window::createWindow()
 	{
-		auto rawWindow = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+		auto rawWindow = glfwCreateWindow(size.x, size.y, title.c_str(), NULL, NULL);
 
 		glfwMakeContextCurrent(rawWindow);
 
@@ -31,7 +30,7 @@ namespace JamEngine
 
 	void Window::initializeWindow()
 	{
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, size.x, size.y);
 		isOpen = true;
 	}
 

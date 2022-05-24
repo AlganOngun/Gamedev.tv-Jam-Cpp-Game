@@ -7,7 +7,7 @@
 
 namespace JamEngine
 {
-	Window App::window("Jam Game", 600, 600);
+	Window App::window("Jam Game", {600, 600});
 	bool App::isOpen = false;
 
     void App::initialize()
