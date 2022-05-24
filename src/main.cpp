@@ -4,20 +4,27 @@
 
 class JamGame : public JamEngine::App
 {
+private:
+	bool isOpen = false;
 public:
 	void start()
 	{
 		JamEngine::App::initialize();
+		isOpen = JamEngine::App::window.isWindowOpen();
+
+		JamEngine::Color color {0.2f, 0.3f, 0.3f};
+		JamEngine::App::window.changeColor(color);
 	}
 
 	void run()
 	{
 		JamEngine::App::update();
+		isOpen = JamEngine::App::window.isWindowOpen();
 	}
 
 	bool shouldEnd()
 	{
-		return !JamEngine::App::isOpen;
+		return !isOpen;
 	}
 
 	~JamGame()

@@ -6,15 +6,13 @@ namespace JamEngine
 {
     class App
     {
-	private:
+	protected:
 		static Window window;
 
     public:
         static void initialize();
         static void update();
         static void end();
-
-		static bool isOpen;
 
         virtual void start() = 0;
         virtual void run() = 0;

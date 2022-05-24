@@ -40,6 +40,9 @@ namespace JamEngine
 
 		auto rawWindow = glfwWindow.release();
 
+		glClearColor(color.r, color.g, color.b, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		glfwSwapBuffers(rawWindow);
 		glfwPollEvents();
 
@@ -54,5 +57,10 @@ namespace JamEngine
 	bool Window::isWindowOpen()
 	{
 		return isOpen;
+	}
+
+	void Window::changeColor(Color newColor)
+	{
+		this->color = newColor;
 	}
 }

@@ -11,6 +11,7 @@ namespace JamEngine
 		smartGlfwWindow glfwWindow;
 
 		Vector2 size;
+		Color color;
 		std::string title{};
 		bool isOpen = false;
 
@@ -22,6 +23,8 @@ namespace JamEngine
 
 		void createWindow();
 		void initializeWindow();
+
+		void changeColor(Color newColor);
 
 		void update();
 
