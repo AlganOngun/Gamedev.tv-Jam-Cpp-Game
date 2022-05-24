@@ -1,6 +1,0 @@
-# ninja log v5
-0	221	1653421204684055443	CMakeFiles/game.dir/glad.c.o	c461e21d6a8540d5
-1	409	1653421204872054020	CMakeFiles/game.dir/Engine/app.cpp.o	455e9f701a230310
-0	435	1653421204900053808	CMakeFiles/game.dir/Engine/Renderer/Window.cpp.o	a13c1fa53bd5f88
-1	471	1653421204936053536	CMakeFiles/game.dir/src/main.cpp.o	667e585b3051f702
-471	563	1653421205028052840	game	30a86aceea2e467e
