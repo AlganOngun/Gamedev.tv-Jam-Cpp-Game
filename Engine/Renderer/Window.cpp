@@ -9,6 +9,14 @@ namespace JamEngine
 		this->size = size;
 	}
 
+	Window& Window::operator=(const Window& right)
+	{
+		this->title = right.title;
+		this->size = right.size;
+		
+		return *this;
+	}
+
 	Window::~Window()
 	{
 		closeWindow();
@@ -26,6 +34,8 @@ namespace JamEngine
 		glfwMakeContextCurrent(rawWindow);
 
 		glfwWindow.reset(rawWindow);
+
+		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	}
 
 	void Window::initializeWindow()
@@ -59,8 +69,14 @@ namespace JamEngine
 		return isOpen;
 	}
 
-	void Window::changeColor(Color newColor)
+	void Window::changeColor(const Color& newColor)
 	{
 		this->color = newColor;
+	}
+
+	Window::Window(const Window &window)
+	{
+		this->size = window.size;
+		this->title = window.title;
 	}
 }

@@ -6,20 +6,24 @@ class JamGame : public JamEngine::App
 {
 private:
 	bool isOpen = false;
+
+	JamEngine::Window window = JamEngine::Window("Game", {600, 600});
 public:
+
 	void start()
 	{
 		JamEngine::App::initialize();
-		isOpen = JamEngine::App::window.isWindowOpen();
 
-		JamEngine::Color color {0.2f, 0.3f, 0.3f};
-		JamEngine::App::window.changeColor(color);
+		window.createWindow();
+		window.initializeWindow();
+
+		isOpen = window.isWindowOpen();
 	}
 
 	void run()
 	{
-		JamEngine::App::update();
-		isOpen = JamEngine::App::window.isWindowOpen();
+		window.update();
+		isOpen = window.isWindowOpen();
 	}
 
 	bool shouldEnd()

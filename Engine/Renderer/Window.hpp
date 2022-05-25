@@ -19,15 +19,18 @@ namespace JamEngine
 
 	public:
 		Window(const std::string& title, const Vector2& size);
+		Window& operator=(const Window& right);
 		~Window();
 
 		void createWindow();
 		void initializeWindow();
 
-		void changeColor(Color newColor);
+		void changeColor(const Color& newColor);
 
 		void update();
 
 		bool isWindowOpen();
-    };
+
+		Window(const Window& window);
+	};
 }

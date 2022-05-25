@@ -1,17 +1,13 @@
 #pragma once
 
-#include "Renderer/Window.hpp"
-
 namespace JamEngine
 {
+	class Window;
+
     class App
     {
-	protected:
-		static Window window;
-
     public:
         static void initialize();
-        static void update();
         static void end();
 
         virtual void start() = 0;
