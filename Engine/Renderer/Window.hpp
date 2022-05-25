@@ -23,7 +23,6 @@ namespace JamEngine
 		~Window();
 
 		void createWindow();
-		void initializeWindow();
 
 		void changeColor(const Color& newColor);
 

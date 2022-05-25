@@ -36,10 +36,7 @@ namespace JamEngine
 		glfwWindow.reset(rawWindow);
 
 		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	}
 
-	void Window::initializeWindow()
-	{
 		glViewport(0, 0, size.x, size.y);
 		isOpen = true;
 	}

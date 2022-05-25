@@ -15,7 +15,6 @@ public:
 		JamEngine::App::initialize();
 
 		window.createWindow();
-		window.initializeWindow();
 
 		isOpen = window.isWindowOpen();
 	}
