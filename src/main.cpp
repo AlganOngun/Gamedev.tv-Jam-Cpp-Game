@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <JamEngine.hpp>
@@ -5,7 +6,7 @@
 class JamGame : public JamEngine::App
 {
 private:
-	bool isOpen = false;
+	bool isOpen = true;
 
 	JamEngine::Window window = JamEngine::Window("Game", {600, 600});
 public:
@@ -15,14 +16,23 @@ public:
 		JamEngine::App::initialize();
 
 		window.createWindow();
-
-		isOpen = window.isWindowOpen();
+		window.setCallbackFunction(std::bind(&JamGame::OnWindowEvent, this, std::placeholders::_1));
 	}
 
 	void run()
 	{
 		window.update();
-		isOpen = window.isWindowOpen();
+	}
+
+	void OnWindowEvent(const JamEngine::Event& e)
+	{
+		JamEngine::EventDispatcher dispatcher;
+		dispatcher.dispatch<JamEngine::WindowCloseEvent>(e, std::bind(&JamGame::OnWindowCloseEvent, this, std::placeholders::_1));
+	}
+
+	void OnWindowCloseEvent(const JamEngine::WindowCloseEvent& e)
+	{
+		isOpen = false;
 	}
 
 	bool shouldEnd()

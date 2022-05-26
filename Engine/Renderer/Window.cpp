@@ -1,79 +1,77 @@
 #include "../Utils/enginePch.hpp"
+#include "../Events/Event.hpp"
+#include "../Events/WindowCloseEvent.hpp"
 #include "Window.hpp"
 
 namespace JamEngine
 {
-	Window::Window(const std::string& title, const Vector2& size)
-	{
-		this->title = title;
-		this->size = size;
-	}
+    Window::Window(const std::string& title, const Vector2& size)
+    {
+        this->properties.title = title;
+        this->properties.size = size;
+    }
 
-	Window& Window::operator=(const Window& right)
-	{
-		this->title = right.title;
-		this->size = right.size;
-		
-		return *this;
-	}
+    Window& Window::operator=(const Window& right)
+    {
+        this->properties.title = right.properties.title;
+        this->properties.size = right.properties.size;
 
-	Window::~Window()
-	{
-		closeWindow();
-	}
+        return *this;
+    }
 
-	void Window::closeWindow()
-	{
-		isOpen = false;
-	}
+    void Window::createWindow()
+    {
+        auto rawWindow = glfwCreateWindow(properties.size.x, properties.size.y, properties.title.c_str(), NULL, NULL);
 
-	void Window::createWindow()
-	{
-		auto rawWindow = glfwCreateWindow(size.x, size.y, title.c_str(), NULL, NULL);
+        glfwMakeContextCurrent(rawWindow);
 
-		glfwMakeContextCurrent(rawWindow);
+        glfwWindow.reset(rawWindow);
 
-		glfwWindow.reset(rawWindow);
+        gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
-		gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        glViewport(0, 0, properties.size.x, properties.size.y);
+    }
 
-		glViewport(0, 0, size.x, size.y);
-		isOpen = true;
-	}
+    void Window::update()
+    {
+        auto rawWindow = glfwWindow.release();
 
-	void Window::update()
-	{
-		if(!isOpen) return;
+        glClearColor(properties.color.r, properties.color.g, properties.color.b, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-		auto rawWindow = glfwWindow.release();
+        glfwSwapBuffers(rawWindow);
+        glfwPollEvents();
 
-		glClearColor(color.r, color.g, color.b, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+        glfwWindow.reset(rawWindow);
+    }
 
-		glfwSwapBuffers(rawWindow);
-		glfwPollEvents();
+    void Window::changeColor(const Color& newColor)
+    {
+        this->properties.color = newColor;
+    }
 
-		if(glfwWindowShouldClose(rawWindow)) 
-		{
-			glfwWindow.reset(rawWindow);
-			closeWindow();
-		}
-		glfwWindow.reset(rawWindow);
-	}
+    void Window::setCallbackFunction(const eventCallbackFunction& callbackFunction)
+    {
+		properties.callbackFunction = callbackFunction;
 
-	bool Window::isWindowOpen()
-	{
-		return isOpen;
-	}
+        auto rawWindow = glfwWindow.release();
 
-	void Window::changeColor(const Color& newColor)
-	{
-		this->color = newColor;
-	}
+        glfwSetWindowUserPointer(rawWindow, &properties);
 
-	Window::Window(const Window &window)
-	{
-		this->size = window.size;
-		this->title = window.title;
-	}
+        glfwSetWindowCloseCallback(rawWindow, [](GLFWwindow * window)
+        {
+			auto properties = *(windowProperties*)glfwGetWindowUserPointer(window);
+
+			WindowCloseEvent event;
+			properties.callbackFunction(event);
+        });
+
+        glfwWindow.reset(rawWindow);
+    }
+
+    Window::Window(const Window& window)
+    {
+        this->properties.size = window.properties.size;
+        this->properties.title = window.properties.title;
+    }
 }

@@ -5,31 +5,39 @@
 
 namespace JamEngine
 {
+	class Event;
+
     class Window
     {
-	private:
-		smartGlfwWindow glfwWindow;
+    private:
 
-		Vector2 size;
-		Color color;
-		std::string title{};
-		bool isOpen = false;
+        using eventCallbackFunction = std::function<void(Event&)>;
 
-		void closeWindow();
+        smartGlfwWindow glfwWindow;
 
-	public:
-		Window(const std::string& title, const Vector2& size);
-		Window& operator=(const Window& right);
-		~Window();
+        struct windowProperties
+        {
+            Vector2 size{};
+            Color color{};
+            std::string title{};
 
-		void createWindow();
+			eventCallbackFunction callbackFunction;
+        };
 
-		void changeColor(const Color& newColor);
+		windowProperties properties;
 
-		void update();
+    public:
+        Window(const std::string& title, const Vector2& size);
+        Window& operator=(const Window& right);
 
-		bool isWindowOpen();
+        void createWindow();
 
-		Window(const Window& window);
-	};
+        void changeColor(const Color& newColor);
+
+        void setCallbackFunction(const eventCallbackFunction& callbackFunction);
+
+        void update();
+
+        Window(const Window& window);
+    };
 }
