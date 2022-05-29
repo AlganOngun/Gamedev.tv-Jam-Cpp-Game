@@ -17,7 +17,7 @@ namespace JamEngine
 
         struct windowProperties
         {
-            Vector2 size{};
+            Vector2I size{};
             Color color{};
             std::string title{};
 
@@ -27,7 +27,7 @@ namespace JamEngine
 		windowProperties properties;
 
     public:
-        Window(const std::string& title, const Vector2& size);
+        Window(const std::string& title, const Vector2I& size);
         Window& operator=(const Window& right);
 
         void createWindow();

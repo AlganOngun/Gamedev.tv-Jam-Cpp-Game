@@ -9,6 +9,6 @@ namespace JamEngine
 
 	std::string Event::getRealType() const
 	{
-		return Event::getStaticType();
+		return getStaticType();
 	}
 }

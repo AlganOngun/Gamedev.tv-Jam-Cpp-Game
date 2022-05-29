@@ -9,7 +9,7 @@ namespace JamEngine
 
 	std::string WindowCloseEvent::getRealType() const
 	{
-		return WindowCloseEvent::getStaticType();
+		return getStaticType();
 	}
 
 	std::string WindowCloseEvent::getInfo() const

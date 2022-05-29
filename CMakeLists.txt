@@ -5,7 +5,7 @@ project(game)
 
 set(GLAD glad.c)
 file(GLOB_RECURSE GAME_SOURCES src/*.cpp)
-file(GLOB_RECURSE ENGINE Engine/*.cpp)
+file(GLOB_RECURSE ENGINE Engine/*.cpp Engine/Renderer/LowLevel/VAO.cpp)
 set(ENGINE_PCH Engine/Utils/enginePch.hpp)
 
 add_executable(game ${GLAD} ${ENGINE_PCH} ${ENGINE} ${GAME_SOURCES})

@@ -8,3 +8,9 @@
 #include "../Events/Event.hpp"
 #include "../Events/WindowCloseEvent.hpp"
 #include "../EventSystem/EventDispatcher.hpp"
+
+#include "../Renderer/LowLevel/VAO.hpp"
+#include "../Renderer/LowLevel/VBO.hpp"
+#include "../Renderer/LowLevel/Shader.hpp"
+#include "../Renderer/LowLevel/ShaderProgram.hpp"
+#include "../Renderer/LowLevel/VertexArray.hpp"
