@@ -77,6 +77,10 @@ namespace JamEngine
         {
 			auto properties = *(windowProperties*)glfwGetWindowUserPointer(window);
 
+			properties.size = {width, height};
+
+			glViewport(0, 0, width, height);
+
 			WindowResizeEvent event({width, height});
 			properties.callbackFunction(event);
         });

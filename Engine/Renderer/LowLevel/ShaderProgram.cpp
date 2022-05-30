@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 namespace JamEngine
@@ -43,8 +44,14 @@ namespace JamEngine
 		glUseProgram(programId);
 	}
 
+	void ShaderProgram::setMat4Uniform(std::string uniformName, glm::mat4 matrix)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(programId, uniformName.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
 	void ShaderProgram::deleteProgram()
 	{
 		glDeleteProgram(programId);
 	}
+
 }

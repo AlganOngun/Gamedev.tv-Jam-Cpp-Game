@@ -1,5 +1,8 @@
 #pragma once
 
+#include "../../Utils/enginePch.hpp"
+#include <glm/glm.hpp>
+
 namespace JamEngine
 {
 	class Shader;
@@ -16,5 +19,7 @@ namespace JamEngine
 		void linkProgramAndCheckForErrors();
 		void useProgram();
 		void deleteProgram();
+		
+		void setMat4Uniform(std::string uniformName, glm::mat4 matrix);
 	};
 }

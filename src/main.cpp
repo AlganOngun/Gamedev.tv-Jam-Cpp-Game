@@ -1,9 +1,12 @@
 #include <functional>
+#include <glm/ext/matrix_transform.hpp>
 #include <iostream>
 #include <memory>
 #include "../Engine/include/JamEngine.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class JamGame : public JamEngine::App
 {
@@ -13,6 +16,8 @@ private:
 	JamEngine::Window window = JamEngine::Window("Game", {600, 600});
 	JamEngine::ShaderProgram program;
 	JamEngine::VAO vao;
+
+	glm::mat4 projection = glm::ortho(0.0f, 600.0f, 600.0f, 0.0f, -1.0f, 1.0f);
 public:
 
 	void start()
@@ -20,15 +25,14 @@ public:
 		JamEngine::App::initialize();
 
 		window.createWindow();
-		window.changeColor({1.0f, 0.0f, 0.0f});
+		window.changeColor({0.0f, 0.0f, 0.0f});
 		window.setCallbackFunction(std::bind(&JamGame::OnWindowEvent, this, std::placeholders::_1));
 
-
-		JamEngine::Shader vertexShader("../Shaders/testVertex.jmsh");
+		JamEngine::Shader vertexShader("../Shaders/spriteVertex.jmsh");
 		vertexShader.initializeShader(GL_VERTEX_SHADER);
 		vertexShader.createAndCompileShader();
 
-		JamEngine::Shader fragmentShader("../Shaders/testFragment.jmsh");
+		JamEngine::Shader fragmentShader("../Shaders/spriteFragment.jmsh");
 		fragmentShader.initializeShader(GL_FRAGMENT_SHADER);
 		fragmentShader.createAndCompileShader();
 
@@ -42,18 +46,30 @@ public:
 		fragmentShader.deleteShader();
 
 		JamEngine::VertexArray vertices;
-		vertices.push({-0.5f, -0.5f});
+		vertices.push({0.5f, 0.5f});
 		vertices.push({0.5f, -0.5f});
-		vertices.push({0.0f,  0.5f});
+		vertices.push({-0.5f, -0.5f});
+		vertices.push({-0.5f, 0.5f});
+
+		std::array<unsigned int, 6> indices =
+		{
+			0, 1, 3,
+			1, 2, 3
+		};
 
 		JamEngine::VBO vbo(vertices);
+		JamEngine::EBO<6> ebo(indices);
 		vao.generate();
 		vbo.generateBuffer();
+		ebo.generateBuffer();
 
 		vao.bind();
-		
+
 		vbo.bindBuffer();
 		vbo.initializeBuffer();
+
+		ebo.bindBuffer();
+		ebo.initializeBuffer();
 
 		vbo.addVertexAttribute<float>(0, 3, GL_FLOAT, 0);
 		vbo.enableVertexAttributes();
@@ -67,8 +83,19 @@ public:
 	void run()
 	{
 		program.useProgram();
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(300.0f, 300.0f, 0.0f));
+
+ 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		model = glm::scale(model, glm::vec3(50.0f, 50.0f, 1.0f));
+
+		program.setMat4Uniform("model", model);
+		program.setMat4Uniform("projection", projection);
+
 		vao.bind();
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		window.update();
 	}
