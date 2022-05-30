@@ -3,8 +3,6 @@
 #include <iostream>
 #include <memory>
 #include "../Engine/include/JamEngine.hpp"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -83,16 +81,6 @@ public:
 	void run()
 	{
 		program.useProgram();
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(300.0f, 300.0f, 0.0f));
-
- 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		model = glm::scale(model, glm::vec3(50.0f, 50.0f, 1.0f));
-
-		program.setMat4Uniform("model", model);
-		program.setMat4Uniform("projection", projection);
 
 		vao.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
