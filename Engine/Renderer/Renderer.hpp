@@ -18,10 +18,10 @@ namespace JamEngine
 
 		void renderObject(Renderable& object) const;
 		void generateAndAttachShaders(Renderable& object) const;
-		VBO& generateVBO(Renderable& object) const;
+		void generateVBO(Renderable& object) const;
+		void generateEBO(Renderable& object) const;
 	public:
 		Renderer(const std::vector<std::reference_wrapper<Renderable>>& objects) : objects(objects) {}
-		void initialize() const;
         void render() const;
     };
 }

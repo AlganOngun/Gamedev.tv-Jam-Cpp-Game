@@ -14,4 +14,5 @@
 #include "../Renderer/LowLevel/Shader.hpp"
 #include "../Renderer/LowLevel/ShaderProgram.hpp"
 #include "../Renderer/LowLevel/VertexArray.hpp"
-#include "../Renderer/LowLevel/EBO.hpp"
+#include "../Renderer/Renderable.hpp"
+#include "../Renderer/Renderer.hpp"

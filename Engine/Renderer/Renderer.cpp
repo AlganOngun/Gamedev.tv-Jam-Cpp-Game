@@ -1,6 +1,7 @@
 #include "../Utils/enginePch.hpp"
 #include "LowLevel/VAO.hpp"
 #include "LowLevel/VBO.hpp"
+#include "LowLevel/EBO.hpp"
 #include "Renderable.hpp"
 #include "Renderer.hpp"
 
@@ -13,20 +14,14 @@
 
 namespace JamEngine
 {
-	void Renderer::initialize() const
-	{
-		for(auto& object : objects)
-		{
-			initializeObject(object);
-		}
-	}
-
 	void Renderer::initializeObject(Renderable& object) const
 	{
-        auto objectProperties = object.getProperties();
+        auto& objectProperties = object.getProperties();
+
+		glm::mat4 projection = glm::ortho(0.0f, 600.0f, 600.0f, 0.0f, -1.0f, 1.0f);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(objectProperties.scale.x, objectProperties.scale.y, 0.0f));
+        model = glm::translate(model, glm::vec3(objectProperties.worldPosition.x, objectProperties.worldPosition.y, 0.0f));
 
         model = glm::rotate(model, glm::radians(objectProperties.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -38,16 +33,17 @@ namespace JamEngine
 		objectVao.generate();
 		objectVao.bind();
 
-		VBO& objectVbo = generateVBO(object);
+		generateVBO(object);
+		generateEBO(object);
 
-		objectVbo.deleteBuffer();
-		
+		objectProperties.shaderProgram.useProgram();
         objectProperties.shaderProgram.setMat4Uniform("model", model);
+		objectProperties.shaderProgram.setMat4Uniform("projection", projection);
 	}
 
 	void Renderer::generateAndAttachShaders(Renderable& object) const
 	{
-        auto objectProperties = object.getProperties();
+        auto& objectProperties = object.getProperties();
 
         Shader vertexShader(objectProperties.vertexShaderPath);
         vertexShader.initializeShader(GL_VERTEX_SHADER);
@@ -58,45 +54,56 @@ namespace JamEngine
         fragmentShader.createAndCompileShader();
 
         ShaderProgram& objectProgram = objectProperties.shaderProgram;
-        objectProgram.createProgram();
-        objectProgram.attachShader(vertexShader);
-        objectProgram.attachShader(fragmentShader);
-        objectProgram.linkProgramAndCheckForErrors();
+		objectProperties.shaderProgram.createProgram();
+		objectProperties.shaderProgram.attachShader(vertexShader);
+		objectProperties.shaderProgram.attachShader(fragmentShader);
+		objectProperties.shaderProgram.linkProgramAndCheckForErrors();
 
         vertexShader.deleteShader();
         fragmentShader.deleteShader();
 	}
 
-	VBO& Renderer::generateVBO(Renderable& object) const
+	void Renderer::generateVBO(Renderable& object) const
 	{
-		auto objectProperties = object.getProperties();
+		auto& objectProperties = object.getProperties();
 
-		VBO vbo(objectProperties.vertices);
-		vbo.generateBuffer();
+		VBO objectVbo(objectProperties.vertices);
+		objectVbo.generateBuffer();
 
-		vbo.bindBuffer();
-		vbo.initializeBuffer();
+		objectVbo.bindBuffer();
+		objectVbo.initializeBuffer();
+		objectVbo.addVertexAttribute<float>(0, 3, GL_FLOAT, 0);
+		objectVbo.enableVertexAttributes();
+	}
 
-		vbo.addVertexAttribute<float>(0, 3, GL_FLOAT, 0);
-		vbo.enableVertexAttributes();
+	void Renderer::generateEBO(Renderable& object) const
+	{
+		auto& objectProperties = object.getProperties();
 
-		vbo.unbindBuffer();
+		EBO objectEbo(objectProperties.indices);
+		objectEbo.generateBuffer();
 
-		return vbo;
+		objectEbo.bindBuffer();
+		objectEbo.initializeBuffer();
 	}
 
     void Renderer::render() const
     {
         for(auto& object : objects)
         {
+			initializeObject(object);
 			renderObject(object);
         }
     }
 
     void Renderer::renderObject(Renderable& object) const
     {
-		auto objectProperties = object.getProperties();
+		auto& objectProperties = object.getProperties();
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		objectProperties.shaderProgram.useProgram();
+
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		objectProperties.shaderProgram.deleteProgram();
     }
 }

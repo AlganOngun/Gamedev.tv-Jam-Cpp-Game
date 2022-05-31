@@ -6,23 +6,23 @@
 
 namespace JamEngine
 {
-	struct renderableProperties
-	{
-		Vector2F worldPosition;
-		Vector2F scale;
-		float rotation;
+    struct renderableProperties
+    {
+        Vector2F worldPosition;
+        Vector2F scale;
+        float rotation;
 
-		std::string vertexShaderPath, fragmentShaderPath;
+        std::string vertexShaderPath, fragmentShaderPath;
 
-		VertexArray vertices;
+        VertexArray vertices;
 		std::vector<unsigned int> indices;
 
-		ShaderProgram shaderProgram;
-	};
+        ShaderProgram shaderProgram;
+    };
 
-	class Renderable
-	{
-	public:
-		virtual renderableProperties& getProperties() const = 0;
-	};
+    class Renderable
+    {
+    public:
+        virtual renderableProperties& getProperties() = 0;
+    };
 }

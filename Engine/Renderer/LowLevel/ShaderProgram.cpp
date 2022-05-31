@@ -12,7 +12,6 @@ namespace JamEngine
     void ShaderProgram::createProgram()
     {
         programId = glCreateProgram();
-		std::cout << "Generated Shader Program" << std::endl;
     }
 
     void ShaderProgram::attachShader(const Shader& shader)

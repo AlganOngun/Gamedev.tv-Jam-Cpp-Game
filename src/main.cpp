@@ -6,121 +6,123 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+class Square : public JamEngine::Renderable
+{
+private:
+	JamEngine::renderableProperties properties {};
+public:
+	Square(std::string vertexShaderPath, std::string fragmentShaderPath, JamEngine::Vector2F worldPosition, JamEngine::Vector2F scale, float rotation)
+	{
+		properties.vertexShaderPath = vertexShaderPath;
+		properties.fragmentShaderPath = fragmentShaderPath;
+		properties.rotation = rotation;
+		properties.scale = scale;
+		properties.worldPosition = worldPosition;
+	}
+
+	void setVertices(JamEngine::VertexArray vertices)
+	{
+		properties.vertices = vertices;
+	}
+
+	void setIndices(const std::vector<unsigned int>& indices)
+	{
+		properties.indices = indices;
+	}
+
+	JamEngine::renderableProperties& getProperties() override
+	{
+		return properties;
+	}
+};
+
 class JamGame : public JamEngine::App
 {
 private:
-	bool isOpen = true;
+    bool isOpen = true;
 
-	JamEngine::Window window = JamEngine::Window("Game", {600, 600});
-	JamEngine::ShaderProgram program;
-	JamEngine::VAO vao;
-
-	glm::mat4 projection = glm::ortho(0.0f, 600.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+    JamEngine::Window window = JamEngine::Window("Game", {600, 600});
+	Square mySquare = Square("../Shaders/spriteVertex.jmsh", "../Shaders/spriteFragment.jmsh", {300.0f, 300.0f}, {150.0f, 150.0f}, 45.0f);
+	Square anotherSquare = Square("../Shaders/spriteVertex.jmsh", "../Shaders/spriteFragment.jmsh", {0.0f, 0.0f}, {150.0f, 150.0f}, 0.0f);
+	std::vector<std::reference_wrapper<JamEngine::Renderable>> objects;
+	std::unique_ptr<JamEngine::Renderer> renderer;
 public:
 
-	void start()
+    void start()
 	{
 		JamEngine::App::initialize();
 
 		window.createWindow();
-		window.changeColor({0.0f, 0.0f, 0.0f});
+		window.changeColor({ 0.0f, 0.0f, 0.0f });
 		window.setCallbackFunction(std::bind(&JamGame::OnWindowEvent, this, std::placeholders::_1));
 
-		JamEngine::Shader vertexShader("../Shaders/spriteVertex.jmsh");
-		vertexShader.initializeShader(GL_VERTEX_SHADER);
-		vertexShader.createAndCompileShader();
-
-		JamEngine::Shader fragmentShader("../Shaders/spriteFragment.jmsh");
-		fragmentShader.initializeShader(GL_FRAGMENT_SHADER);
-		fragmentShader.createAndCompileShader();
-
-		program.createProgram();
-
-		program.attachShader(vertexShader);
-		program.attachShader(fragmentShader);
-		program.linkProgramAndCheckForErrors();
-
-		vertexShader.deleteShader();
-		fragmentShader.deleteShader();
-
 		JamEngine::VertexArray vertices;
-		vertices.push({0.5f, 0.5f});
-		vertices.push({0.5f, -0.5f});
-		vertices.push({-0.5f, -0.5f});
-		vertices.push({-0.5f, 0.5f});
+		vertices.push({ 0.5f, 0.5f });
+		vertices.push({ 0.5f, -0.5f });
+		vertices.push({ -0.5f, -0.5f });
+		vertices.push({ -0.5f, 0.5f });
 
-		std::array<unsigned int, 6> indices =
+		std::vector<unsigned int> indices = 
 		{
 			0, 1, 3,
 			1, 2, 3
 		};
 
-		JamEngine::VBO vbo(vertices);
-		JamEngine::EBO<6> ebo(indices);
-		vao.generate();
-		vbo.generateBuffer();
-		ebo.generateBuffer();
+		std::vector<unsigned int> secondIndices = 
+		{
+			0, 1, 3
+		};
 
-		vao.bind();
+		mySquare.setVertices(vertices);
+		anotherSquare.setVertices(vertices);
 
-		vbo.bindBuffer();
-		vbo.initializeBuffer();
+		mySquare.setIndices(secondIndices);
+		anotherSquare.setIndices(indices);
 
-		ebo.bindBuffer();
-		ebo.initializeBuffer();
+		objects.push_back(anotherSquare);
+		objects.push_back(mySquare);
 
-		vbo.addVertexAttribute<float>(0, 3, GL_FLOAT, 0);
-		vbo.enableVertexAttributes();
-
-		vbo.unbindBuffer();
-		vao.unbind();
-
-		vbo.deleteBuffer();
+		renderer = std::make_unique<JamEngine::Renderer>(JamEngine::Renderer(objects));
 	}
 
-	void run()
-	{
-		program.useProgram();
+    void run()
+    {
+		renderer->render();
 
-		vao.bind();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        window.update();
+    }
 
-		window.update();
-	}
+    void OnWindowEvent(const JamEngine::Event& e)
+    {
+        std::cout << e.getInfo() << std::endl;
+        JamEngine::EventDispatcher dispatcher;
+        dispatcher.dispatch<JamEngine::WindowCloseEvent>(e, std::bind(&JamGame::OnWindowCloseEvent, this, std::placeholders::_1));
+    }
 
-	void OnWindowEvent(const JamEngine::Event& e)
-	{
-		std::cout << e.getInfo() << std::endl;
-		JamEngine::EventDispatcher dispatcher;
-		dispatcher.dispatch<JamEngine::WindowCloseEvent>(e, std::bind(&JamGame::OnWindowCloseEvent, this, std::placeholders::_1));
-	}
+    void OnWindowCloseEvent(const JamEngine::WindowCloseEvent& e)
+    {
+        isOpen = false;
+    }
 
-	void OnWindowCloseEvent(const JamEngine::WindowCloseEvent& e)
-	{
-		isOpen = false;
-	}
+    bool shouldEnd()
+    {
+        return !isOpen;
+    }
 
-	bool shouldEnd()
-	{
-		return !isOpen;
-	}
-
-	void end()
-	{
-		vao.deleteObject();
-		program.deleteProgram();
-		JamEngine::App::end();
-	}
+    void end()
+    {
+        JamEngine::App::end();
+    }
 };
 
 int main()
 {
-	auto game = std::make_unique<JamGame>(JamGame());
-	game->start();
+    auto game = std::make_unique<JamGame>(JamGame());
+    game->start();
 
-	while(!game->shouldEnd())
-	{
-		game->run();
-	}
-	game->end();
+    while(!game->shouldEnd())
+    {
+        game->run();
+    }
+    game->end();
 }
