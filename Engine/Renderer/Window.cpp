@@ -97,6 +97,12 @@ namespace JamEngine
                     properties.callbackFunction(event);
                     break;
                 }
+				case GLFW_REPEAT:
+				{
+                    WindowKeyPressedEvent event(key);
+                    properties.callbackFunction(event);
+                    break;
+				}
                 case GLFW_RELEASE:
                 {
                     WindowKeyReleasedEvent event(key);

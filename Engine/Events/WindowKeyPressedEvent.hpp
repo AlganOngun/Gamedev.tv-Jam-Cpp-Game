@@ -15,5 +15,7 @@ namespace JamEngine
 		static std::string getStaticType();
 		std::string getRealType() const override;
 		std::string getInfo() const override;
+
+		int getKeyCode() const;
 	};
 }

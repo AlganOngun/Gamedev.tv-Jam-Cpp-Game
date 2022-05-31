@@ -7,6 +7,7 @@
 
 #include "../Events/Event.hpp"
 #include "../Events/WindowCloseEvent.hpp"
+#include "../Events/WindowKeyPressedEvent.hpp"
 #include "../EventSystem/EventDispatcher.hpp"
 
 #include "../Renderer/LowLevel/VAO.hpp"

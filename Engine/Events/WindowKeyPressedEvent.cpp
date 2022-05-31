@@ -16,4 +16,9 @@ namespace JamEngine
 	{
 		return "WindowKeyPressedEvent : keyCode: " + std::to_string(keyCode);
 	}
+
+	int WindowKeyPressedEvent::getKeyCode() const
+	{
+		return keyCode;
+	}
 }

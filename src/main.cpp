@@ -3,38 +3,11 @@
 #include <iostream>
 #include <memory>
 #include "../Engine/include/JamEngine.hpp"
+#include "Object.hpp"
+#include "Player.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-class Square : public JamEngine::Renderable
-{
-private:
-	JamEngine::renderableProperties properties {};
-public:
-	Square(std::string vertexShaderPath, std::string fragmentShaderPath, JamEngine::Vector2F worldPosition, JamEngine::Vector2F scale, float rotation)
-	{
-		properties.vertexShaderPath = vertexShaderPath;
-		properties.fragmentShaderPath = fragmentShaderPath;
-		properties.rotation = rotation;
-		properties.scale = scale;
-		properties.worldPosition = worldPosition;
-	}
-
-	void setVertices(JamEngine::VertexArray vertices)
-	{
-		properties.vertices = vertices;
-	}
-
-	void setIndices(const std::vector<unsigned int>& indices)
-	{
-		properties.indices = indices;
-	}
-
-	JamEngine::renderableProperties& getProperties() override
-	{
-		return properties;
-	}
-};
 
 class JamGame : public JamEngine::App
 {
@@ -42,52 +15,30 @@ private:
     bool isOpen = true;
 
     JamEngine::Window window = JamEngine::Window("Game", {600, 600});
-	Square mySquare = Square("../Shaders/spriteVertex.jmsh", "../Shaders/spriteFragment.jmsh", {300.0f, 300.0f}, {150.0f, 150.0f}, 45.0f);
-	Square anotherSquare = Square("../Shaders/spriteVertex.jmsh", "../Shaders/spriteFragment.jmsh", {0.0f, 0.0f}, {150.0f, 150.0f}, 0.0f);
-	std::vector<std::reference_wrapper<JamEngine::Renderable>> objects;
-	std::unique_ptr<JamEngine::Renderer> renderer;
+
+	Player player;
 public:
 
     void start()
-	{
-		JamEngine::App::initialize();
+    {
+        JamEngine::App::initialize();
 
-		window.createWindow();
-		window.changeColor({ 0.0f, 0.0f, 0.0f });
-		window.setCallbackFunction(std::bind(&JamGame::OnWindowEvent, this, std::placeholders::_1));
-
-		JamEngine::VertexArray vertices;
-		vertices.push({ 0.5f, 0.5f });
-		vertices.push({ 0.5f, -0.5f });
-		vertices.push({ -0.5f, -0.5f });
-		vertices.push({ -0.5f, 0.5f });
-
-		std::vector<unsigned int> indices = 
-		{
-			0, 1, 3,
-			1, 2, 3
-		};
-
-		std::vector<unsigned int> secondIndices = 
-		{
-			0, 1, 3
-		};
-
-		mySquare.setVertices(vertices);
-		anotherSquare.setVertices(vertices);
-
-		mySquare.setIndices(secondIndices);
-		anotherSquare.setIndices(indices);
-
-		objects.push_back(anotherSquare);
-		objects.push_back(mySquare);
-
-		renderer = std::make_unique<JamEngine::Renderer>(JamEngine::Renderer(objects));
-	}
+        window.createWindow();
+        window.changeColor({ 0.0f, 0.0f, 0.0f });
+        window.setCallbackFunction(std::bind(&JamGame::OnWindowEvent, this, std::placeholders::_1));
+    }
 
     void run()
     {
-		renderer->render();
+		player.update();
+
+		std::vector<std::reference_wrapper<JamEngine::Renderable>> objects;
+
+		objects.push_back(player.getRenderable());
+
+		JamEngine::Renderer renderer(objects);
+	
+        renderer.render();
 
         window.update();
     }
@@ -97,6 +48,7 @@ public:
         std::cout << e.getInfo() << std::endl;
         JamEngine::EventDispatcher dispatcher;
         dispatcher.dispatch<JamEngine::WindowCloseEvent>(e, std::bind(&JamGame::OnWindowCloseEvent, this, std::placeholders::_1));
+        dispatcher.dispatch<JamEngine::WindowKeyPressedEvent>(e, std::bind(&Player::OnInput, &player, std::placeholders::_1));
     }
 
     void OnWindowCloseEvent(const JamEngine::WindowCloseEvent& e)
